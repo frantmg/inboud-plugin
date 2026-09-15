@@ -1,0 +1,37 @@
+{
+  "channel": "fathom",
+  "externalThreadId": "fathom:8f2c1d9e",
+  "occurredAt": "2026-09-12T14:05:00-04:00",
+  "subject": "Coastal Spine & Pain — Q4 planning",
+  "participants": [
+    {
+      "name": "Dr. Elena Ruiz",
+      "handle": "eruiz@coastalspine.com",
+      "role": "client"
+    },
+    {
+      "name": "Sam Okafor",
+      "handle": "sam@macallangroup.com",
+      "role": "owner"
+    }
+  ],
+  "transcript": "[00:00] Sam Okafor: Thanks for making time. Where do you want to start?\n[00:12] Dr. Elena Ruiz: The site still looks like the old practice — can we get it rebuilt before the open house in October?\n[04:38] Dr. Elena Ruiz: And on the ads — I want to know how many of those actually turned into booked appointments, not just form fills.\n",
+  "summary": "Q4 planning call. Website rebuild before the October open house, and booking attribution for the paid campaign.",
+  "clientName": "Coastal Spine & Pain",
+  "suggestions": [
+    {
+      "title": "Rebuild the practice website on the new brand",
+      "description": "Full rebuild on the brand refreshed in August. Live before the October open house. Hosting migration not discussed — confirm.",
+      "team": "Creative",
+      "confidence": 0.95,
+      "sourceExcerpt": "the site still looks like the old practice — can we get it rebuilt before the open house in October?"
+    },
+    {
+      "title": "Track booking conversions from the spine campaign",
+      "description": "They want bookings attributed to the paid spine campaign, not just form fills. No tooling named on the call.",
+      "team": "Technology",
+      "confidence": 0.7,
+      "sourceExcerpt": "I want to know how many of those actually turned into booked appointments"
+    }
+  ]
+}
