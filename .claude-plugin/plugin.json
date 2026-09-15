@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "intake",
+  "displayName": "Macallan Intake",
+  "version": "0.1.0",
+  "description": "Reads a client email, text message or Fathom call, works out what Macallan has to do about it, matches that work to the live service catalog, routes it to the right teams, and files it as an inbound communication with suggested tasks for someone to review.",
+  "author": {
+    "name": "The Macallan Group"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "macallan",
+    "onboarding",
+    "intake",
+    "clickup",
+    "healthcare",
+    "fathom",
+    "transcript"
+  ],
+  "mcpServers": "./.mcp.json",
+  "userConfig": {
+    "connector_url": {
+      "type": "string",
+      "title": "MCP connection URL",
+      "description": "From Configuration -> Integrations in Macallan Onboarding: https://<your-app>/api/connector/<token>. The token is shown once, when the connection is created. It needs the read and write scopes.",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}

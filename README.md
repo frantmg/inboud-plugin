@@ -47,7 +47,7 @@ email / SMS / Fathom link
 ## Install
 
 ```bash
-/plugin marketplace add <owner>/macallan-intake-plugin
+/plugin marketplace add frantmg/inboud-plugin
 /plugin install intake@macallan
 ```
 

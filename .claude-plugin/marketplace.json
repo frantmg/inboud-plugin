@@ -1,0 +1,20 @@
+{
+  "name": "macallan",
+  "owner": {
+    "name": "The Macallan Group"
+  },
+  "description": "Internal plugins for The Macallan Group's onboarding platform.",
+  "plugins": [
+    {
+      "name": "intake",
+      "displayName": "Macallan Intake",
+      "version": "0.1.0",
+      "description": "Turn a client email, text or Fathom call into a reviewed inbound with suggested tasks, matched to services and routed to teams.",
+      "author": {
+        "name": "The Macallan Group"
+      },
+      "source": "./",
+      "defaultEnabled": true
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "macallan-onboarding": {
+      "type": "http",
+      "url": "${user_config.connector_url}"
+    }
+  }
+}
