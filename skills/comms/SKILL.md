@@ -40,6 +40,10 @@ platform trusts anything filed this way.
 | **Type** | **Required.** `email`, `fathom`, `sms` or `call`. |
 | **Owner** | **Required.** The Macallan person accountable for it. Carried as a participant with `role: "owner"`. |
 
+**The client and the owner are the only two questions this skill may ask**, and
+only when the answer is not already in front of it. The type is read off the
+shape of the input, never asked.
+
 **Deriving the client is still the first attempt** — a thread carries a name,
 an address or a number, and `list_clients` turns any of those into a record
 without troubling the user. What has changed is the fallback: where attribution
@@ -62,22 +66,47 @@ you get there rather than guessing.
 | 3. Extract the work | `extract-work` | a list of work items, each with a verbatim source excerpt |
 | 4. Match to the catalog | `match-services` | serviceKey/stepKey on the items that are catalog work |
 | 5. Route the rest | `route-teams` | a team name on every unmatched item |
-| 6. Show the user | this skill | the grouped plan, for one confirmation |
-| 7. File it | `file-communication` | one `file_communication` call, and what came back |
+| 6. File it | `file-communication` | one `file_communication` call, and what came back |
+| 7. Report | this skill | the grouped plan, as the record of what went in |
 
 Steps 2 and 1 are independent — load the catalog while you are still reading
 the transcript if it saves a round trip. Everything else is sequential:
 matching needs the catalog, routing needs to know what stayed unmatched.
 
-## Before you file, show the plan
+## Ask only what is missing, then file
 
-Filing writes into the organization's shared queue, so it gets one
-confirmation. Print the plan grouped by team — that is how the queue's tray and
-the eventual push both read it — and ask once:
+Two questions, and each one only when the answer is not already there:
+
+| | |
+| --- | --- |
+| **The client** | Derive it first — a name, an address or a number in the thread, through `list_clients`. Ask with `pick-client` only where that comes up empty. |
+| **The owner** | Named by the user already? Use it. Exactly one Macallan participant on the thread? Propose them in one line and take the yes. Several, or none? Ask. |
+
+**Nothing else stops, and there is no "file this?" at the end.** The type comes
+from the shape of the input, the matches come from the catalog, the teams come
+from `list_teams` — none of those is a question, and none of them is improved
+by asking.
+
+The reason filing needs no permission of its own is that **filing is not
+deciding**. Everything lands as a *pending* suggestion; a person accepts, edits
+or dismisses each one at `/inbound`, and re-filing the same thread replaces
+exactly those pending rows while leaving accepted and dismissed ones alone. The
+review is the queue. A prompt in the terminal only moves it somewhere nobody
+keeps a record of.
+
+What still stops you is missing **evidence**, not missing permission: a Fathom
+link that will not open is a stop — ask for the transcript — and a practice
+with no ClickUp folder is a stop, because it is not a client yet.
+
+## Reporting back
+
+Print what was filed, grouped by team — that is how the queue's tray and the
+eventual push both read it:
 
 ```
 Fathom call - Coastal Spine & Pain - 12 Sep 2026
 Client: Coastal Spine & Pain (matched on participant email)
+Owner:  Sam Okafor
 7 suggested tasks across 3 teams
 
 Creative (3)
@@ -93,15 +122,10 @@ Technology (2)
   - Wire the new intake form into GHL                   ghl.forms
   - Track booking conversions from the spine campaign   unmatched
 
-File this? Nothing becomes work until somebody accepts it in /inbound.
+Filed. Waiting at /inbound — nothing is work until somebody accepts it.
 ```
 
-If the user already said "file it" in their request, skip the confirmation and
-file, then report.
-
-## Reporting back
-
-After filing, say four things and stop:
+Then say four things and stop:
 
 - the communication is filed, and against which client — named as ClickUp
   names it, and how the client was established (derived from the thread, or

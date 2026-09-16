@@ -20,7 +20,7 @@ email / SMS / Fathom link
         │                     words it came from
         ├─ match              (serviceKey, stepKey) where a ticket covers it
         ├─ route              a team on everything that stayed unmatched
-        ├─ show the plan      grouped by team, one confirmation
+        ├─ ask what's missing the client and the owner, nothing else
         └─ file it            one file_communication call
                                     │
                               waiting at /inbound
@@ -76,10 +76,12 @@ the connector is stateless and re-authenticates every request.
 ```
 
 `comms` mines a whole conversation and derives the client from what is in it.
-`ticket` files one known job and **always asks which client**, picking it from
-the ClickUp folders rather than from typed text. Both require a **client**, an
-**owner**, and — for a ticket — a title and a description. Both end at
-`/inbound`.
+`ticket` files one known job and takes its client from the ClickUp folders
+rather than from typed text. Both need a **client** and an **owner**, and those
+are the **only two things either one will stop and ask you for** — and only
+when they are not already known. Everything else is derived, and neither waits
+for a "file this?" at the end, because the review it would be asking for is the
+queue itself. Both end at `/inbound`.
 
 Or just paste the content and say what you want — the skills describe their own
 triggers, so "file this call" and "what work does this email imply" both land

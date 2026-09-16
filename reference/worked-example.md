@@ -18,7 +18,7 @@ occurredAt:       "2026-09-12T14:05:00-04:00"   # call start, with the offset
 subject:          "Coastal Spine & Pain — Q4 planning"
 participants:     Dr. Elena Ruiz <eruiz@coastalspine.com> (client)
                   Marta Feld <mfeld@coastalspine.com> (client)
-                  Sam Okafor <sam@macallangroup.com> (internal)
+                  Sam Okafor <sam@macallangroup.com> (owner)
 clientName:       "Coastal Spine & Pain"
 ```
 
@@ -73,10 +73,13 @@ Refresh the logo lockup    → team: "Creative"
 
 Both spelled as the team **name**, from `list_teams`.
 
-## 7. Show, then file
+## 7. File it
 
-Printed the plan grouped by team, got one "yes", called `file_communication`
-once.
+One Macallan person on the call, so the owner was a single line — "Sam as
+owner?", yes — and that was the only question the whole run asked; the client
+came off Dr. Ruiz's email address without troubling anybody. Called
+`file_communication` once, with no "file this?" in between, and printed the
+grouped plan afterwards as the record of what went in.
 
 ```json
 {

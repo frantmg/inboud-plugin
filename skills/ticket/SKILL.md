@@ -1,6 +1,6 @@
 ---
 name: ticket
-description: File one specific piece of work for a client as a single suggested task, without a conversation behind it. Use when somebody says "add a ticket for X", "the client wants a new logo", "log this task", or describes one job they already know needs doing. Always asks which client, and picks that client from the ClickUp folders rather than from typed text. For a whole email thread, text conversation or call, use the `comms` skill instead.
+description: File one specific piece of work for a client as a single suggested task, without a conversation behind it. Use when somebody says "add a ticket for X", "the client wants a new logo", "log this task", or describes one job they already know needs doing. Takes the client from the ClickUp folders rather than from typed text, asking only when the folder is not already unambiguous. For a whole email thread, text conversation or call, use the `comms` skill instead.
 ---
 
 # One ticket
@@ -19,26 +19,38 @@ around it. Nothing here creates a task and nothing reaches ClickUp.
 | --- | --- |
 | **Client** | **Required.** Always asked, always picked from a ClickUp folder. |
 | **Owner** | **Required.** The Macallan person accountable for it. Carried as a participant with `role: "owner"`. |
-| **Title** | **Required.** |
-| **Description** | **Required.** Not a restatement of the title. |
+| **Title** | Written from the ask. Never a question. |
+| **Description** | Written from the user's own words. Never a question. |
 | **Service** | Optional — attached when a catalog ticket genuinely covers it. |
 
-Do not file with any of the three required fields missing or padded. If the
-user gave a one-line ask with no detail, ask for the detail — a ticket whose
-description repeats its title tells the person accepting it nothing, and they
-are the one who has to decide whether it is real.
+**The client and the owner are the only questions here.** A one-line ask with
+no detail still files: write the description from the user's own words, and
+**say in the report that the detail is thin**. The person accepting it at
+`/inbound` can see a description that barely extends its title, and can edit it
+in the tray before it becomes a task — making them wait on a round trip here is
+the more expensive half of that trade.
+
+What does not change: never pad. Do not invent a constraint, a deadline or a
+requester to make the field look fuller than what you were told. A thin
+description honestly labelled is reviewable; a padded one is a small fiction in
+a record somebody is going to act on.
 
 ## The client is always asked, and always comes from ClickUp
 
 This is the part that separates this skill from `comms`. A conversation carries
 evidence — a name, an email address, a phone number — that attribution can be
-derived from. A dictated ticket carries none of it. **Ask, every time, and
-never guess.**
+derived from. A dictated ticket carries none of it, so the client here **always
+comes from a ClickUp folder and never from typed text**.
 
-The procedure is the `pick-client` skill: list the ClickUp folders, confirm the
-match, and resolve the chosen folder to a verified `clientId` with
-`create_client`. A practice with no folder is not a client yet, and that is a
-stop, not something to work around.
+That is not always a question. The procedure is the `pick-client` skill: list
+the folders, resolve the chosen one to a verified `clientId` with
+`create_client`, and where the user already named a practice that matches
+exactly one folder unambiguously, say which one you are using and carry on.
+**Ask** when nothing was named, when several folders match, or when the match
+is close rather than certain — a near-miss is the case this rule exists for,
+because "Coastal Spine" and "Coastal Spine & Pain Institute" can be two
+practices. A practice with no folder is not a client yet, and that is a stop,
+not something to work around.
 
 ## Then the ordinary three steps
 
@@ -130,6 +142,8 @@ asked**. `reference/building-a-project.md` has the reasoning and the rest.
 
 - filed against **which client**, named as ClickUp names it;
 - matched to a service, or unmatched and routed to which team;
+- whether the description is thin — say so plainly, and that the reviewer can
+  edit it in the tray before accepting;
 - whether the team has a list mapped for this client, and that the queue will
   ask if not;
 - that it is waiting at `/inbound`, and that nothing is work yet — no task, no

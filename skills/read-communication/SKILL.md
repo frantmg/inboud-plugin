@@ -216,11 +216,19 @@ exactly why this skill has to.
 
 How to establish it:
 
+- **The user already named them** — use it. There is nothing to confirm; they
+  just told you.
 - **Exactly one Macallan participant on the thread** — propose them and confirm
   in one line. Do not assume silently.
 - **Several, or none** — ask.
 - **Never** default to whoever holds the MCP token. The owner is who is
   accountable, not who ran the tool.
+
+This and the client are the **only two questions** the intake skills ask.
+They survive the rule against asking anything else because they are the two
+answers nobody downstream can reconstruct: the queue can re-word a suggestion,
+re-route it or throw it away, but it cannot work out who was accountable, and
+once a client is set on a communication a re-file cannot move it.
 
 The owner is one of the internal participants, so they appear once, with
 `role: "owner"` rather than `role: "internal"`. Do not list them twice.
