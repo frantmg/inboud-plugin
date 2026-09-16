@@ -15,7 +15,9 @@ Run this list. Each of these has a specific consequence in the app, and all of
 them are cheaper to fix now.
 
 - [ ] `externalThreadId` set — without it, the next reply mints a second queue
-      item instead of appending
+      item instead of appending. For Fathom it is the **share token** from the
+      URL (`fathom:8f2c1d9e`), never the numeric call id inside the page: the
+      two look equally correct and file one call as two records
 - [ ] `occurredAt` is ISO 8601 **with an offset**, and is when the client said
       it, not when you were shown it
 - [ ] participant handles are bare email addresses and E.164 phone numbers —
@@ -30,7 +32,10 @@ them are cheaper to fix now.
       person — established or confirmed, never defaulted to the token holder
 - [ ] a verified `clientId` — derived from the thread or picked from the
       ClickUp folders. This plugin does not file a communication without one,
-      even though the platform would accept it
+      even though the platform would accept it. This is also the last cheap
+      moment to get it right: the client is not part of the dedupe key, and a
+      re-file cannot move a communication whose client is already resolved —
+      after this, fixing it is a person's job in the queue's client picker
 
 ## Making the call
 
@@ -98,6 +103,15 @@ New replies on a thread you already filed: re-file with the **same**
 suggestion list. The platform replaces the *pending* suggestions and leaves
 anything already accepted or dismissed untouched, so nobody's earlier decision
 is undone.
+
+Same thread id, **same client**. The dedupe key is
+`(organization_id, external_thread_id)` and the client is not in it, so a
+re-file under a different `clientId` appends to the record you already filed
+rather than making a second — and it will not re-attribute one whose client is
+already resolved. Filing one conversation for two clients on purpose is the
+exception that puts the client in the thread id
+(`fathom:<token>:<clientId>`); `read-communication` has the rule and what it
+costs.
 
 ## When there is no MCP connection
 
