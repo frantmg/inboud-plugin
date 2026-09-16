@@ -45,7 +45,7 @@ Choose it so that the same conversation always produces the same string:
 | --- | --- |
 | Email | the root message's `Message-ID`, or `References[0]` if you are looking at a reply. No header? `email:<normalized-subject>:<sorted participant handles>` |
 | SMS | `sms:<client number in E.164>` — a text thread with a practice is one continuing conversation, not one per day |
-| Fathom | `fathom:<share token from the URL>` — the token, never the numeric call id inside the page |
+| Fathom | `fathom:<numeric call id>` — the call's own id, never the share token in the URL |
 | Call (unrecorded) | `call:<client slug>:<ISO date>` |
 | Pasted note | `note:<client slug>:<ISO date>` |
 
@@ -60,40 +60,53 @@ alone.
 ## The client is not part of the key
 
 The platform dedupes on `(organization_id, external_thread_id)`. **The client is
-not in that key.** Filing the same content against a different `clientId` does
-not produce a second record — it appends to the existing one and replaces its
-pending suggestions, exactly as a reply would.
+not in that key** — a thread id names a conversation, and a conversation belongs
+to one client.
 
-In production that is correct: one call belongs to one client. It is written
-down here because nothing warns you. Re-file a conversation under a second
-client expecting a second queue item and you get one record, re-attributed in
-your head and nowhere else.
-
-**The exception.** When the same content is deliberately filed for more than one
-client — a test run, or a call that genuinely covers two practices — the thread
-id has to carry the client:
+So filing a thread id that is already attributed to a *different* client is
+neither a second record nor a silent append. **The platform refuses it:**
 
 ```
-fathom:<share token>:<clientId>      e.g. fathom:8f2c1d9e:9c4d1f7a-…
+That thread ("fathom:811632934") is already filed against Coastal Spine & Pain.
+A thread belongs to one client: file this under its own externalThreadId, or
+change the client from the queue, which moves everything with it.
+```
+
+It refuses *before writing anything*, so the existing record keeps its
+transcript, its suggestions and its queue row exactly as they were. That is a
+real answer to surface, not an error to retry around — `file-communication` has
+what to do with it.
+
+**The exception.** When the same content is deliberately filed for more than one
+client — a test run, or a call that genuinely covers two practices — each
+filing needs its own thread id, and the client is what makes it its own:
+
+```
+fathom:<call id>:<clientId>      e.g. fathom:811632934:9c4d1f7a-…
 ```
 
 The trade-off, plainly: that id is stable only while the attribution is. If the
 client on it later changes, a re-file no longer matches the old key and mints a
 second record instead of appending to the first. That is why it is the exception
-and not the default — a plain `fathom:<token>` survives being re-filed, and this
-one only survives having been right the first time.
+and not the default — a plain `fathom:<call id>` survives being re-filed, and
+this one only survives having been right the first time.
 
 ## A re-file cannot move a communication to another client
 
-The platform no longer lets a re-file change which client a communication
-belongs to. An **unresolved** one can still be attributed by a later filing —
-that direction still works. A **resolved** one is fixed: sending a different
-`clientId` on the same thread id will not move it.
+Which direction works, exactly:
 
-Correcting attribution is a person's job, in the queue's client picker. So the
-first filing is the one that counts, which is exactly why `pick-client` insists
-the client is confirmed and never guessed: a guess costs one question before
-filing, and somebody else a trip through the queue afterwards.
+| The record's client | Your filing resolves to | What happens |
+| --- | --- | --- |
+| unresolved | a client | it is attributed — the one direction that still works |
+| a client | nothing resolvable | the record keeps the client it has |
+| a client | a **different** client | **refused**, and nothing is written |
+
+Correcting an attribution that is already set is a person's job, in the queue's
+client picker, which moves the queue row and the suggestions with it. So the
+first filing is the one that counts — exactly why `pick-client` insists the
+client is confirmed and never guessed. A guess costs one question before
+filing; after it, it costs somebody a trip through the queue, or a refusal they
+have to unpick.
 
 ## Email
 
@@ -130,22 +143,37 @@ filing, and somebody else a trip through the queue afterwards.
 ## Fathom calls
 
 - `channel: "fathom"`.
-- **The id is the share token in the URL, not the numeric call id.** A share
-  page exposes both, and they identify the same call:
+- **The id is the numeric call id, not the share token in the URL.** A share
+  page exposes two identifiers and only one of them is an identity:
 
   | | Example | |
   | --- | --- | --- |
-  | share token | `8f2c1d9e`, in `fathom.video/share/8f2c1d9e` | **use this** |
-  | numeric call id | `811632934`, embedded in the page | never |
+  | numeric call id | `811632934` — the page's own `id` field, the `call-<id>` channel, and the path segment on every `/calls/<id>/…` endpoint | **use this** |
+  | share token | `8f2c1d9e` — the string in `fathom.video/share/<token>` | never |
 
-  So that call files as `fathom:8f2c1d9e`.
+  So that call files as `fathom:811632934`, whatever URL it arrived on.
 
-  Because both are right-looking, this goes wrong quietly: across five filings
-  of one call the plugin used the token twice and the numeric id three times,
-  and one call ended up as two records in the queue. The token wins because it
-  is the only one of the two visible without parsing the page — a key that has
-  to be dug out of page internals is a key that changes the day Fathom changes
-  its markup, and a dedupe key that moves is not a dedupe key.
+  The share string is a **credential, not a name**: Fathom passes it as
+  `?token=` to authorise access to the page, and a credential can be revoked
+  and reissued. The day somebody re-shares a call, the token changes, the key
+  changes with it, and one call becomes two records nobody can merge. The
+  numeric id is the call, and survives being re-shared.
+
+  This is written down because the URL is the tempting simplification — it is
+  right there in what the user pasted. Across four runs of one call this plugin
+  sent **three different ids**, which is what a non-deterministic key looks like
+  from the queue's side: the same conversation, arriving as strangers.
+
+  Reading it needs no page internals and no parsing of markup:
+
+  1. **A pasted transcript already carries it.** Every timestamp link inside one
+     is `https://fathom.video/calls/<id>?timestamp=…`. Take `<id>` from the
+     first one.
+  2. **The share page** carries it in that same `/calls/<id>/…` form.
+  3. **Neither is available** — fall back to the share token, file as
+     `fathom:<token>`, and **say in the report that the key may not be stable**,
+     so a later re-file landing as a second record is a known cost rather than a
+     mystery.
 - `subject`: the call title as Fathom has it.
 - `occurredAt`: the call's **start** time, with the offset.
 - `participants`: the attendee list with emails. Mark Macallan people

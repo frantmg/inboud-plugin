@@ -9,11 +9,13 @@ A Fathom call, end to end. Abbreviated, but every step is real.
 
 ## 2. Read it
 
-Fetched the share page; transcript and summary were on it. Envelope:
+Fetched the share page; transcript and summary were on it. The call id came off
+a timestamp link in the transcript — `fathom.video/calls/811632934?timestamp=…`
+— not out of the share URL, which carries a revocable token. Envelope:
 
 ```
 channel:          "fathom"
-externalThreadId: "fathom:8f2c1d9e"
+externalThreadId: "fathom:811632934"            # the call id, not the token
 occurredAt:       "2026-09-12T14:05:00-04:00"   # call start, with the offset
 subject:          "Coastal Spine & Pain — Q4 planning"
 participants:     Dr. Elena Ruiz <eruiz@coastalspine.com> (client)

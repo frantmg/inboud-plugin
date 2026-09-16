@@ -7,7 +7,7 @@ cannot drift.
 ```json
 {
   "channel": "fathom",
-  "externalThreadId": "fathom:8f2c1d9e",
+  "externalThreadId": "fathom:811632934",
   "occurredAt": "2026-09-12T14:05:00-04:00",
   "subject": "Coastal Spine & Pain — Q4 planning",
   "participants": [
@@ -42,7 +42,7 @@ cannot drift.
 | Field | Type | Notes |
 | --- | --- | --- |
 | `channel` | `"sms" \| "email" \| "fathom" \| "note"` | **Required.** |
-| `externalThreadId` | string, ≤ 400 | The dedupe key, unique per organization — the client is **not** part of it. Omit it and every post mints a new record. For Fathom it is the share token from the URL (`fathom:8f2c1d9e`), never the numeric call id inside the page. |
+| `externalThreadId` | string, ≤ 400 | The dedupe key, unique per organization — the client is **not** part of it, and a filing naming a different client is refused. Omit it and every post mints a new record. For Fathom it is the numeric call id (`fathom:811632934`), never the revocable share token from the URL. |
 | `occurredAt` | ISO 8601 **with offset** | When the client said it. Defaults to now, which is wrong for anything forwarded. |
 | `participants` | array, ≤ 50, of `{ name, handle, role }` | `handle` is the email address or phone number, and is what attribution matches on. Exactly one carries `role: "owner"` — see below. |
 | `subject` | string, ≤ 500 | Null for SMS. |
@@ -101,16 +101,15 @@ migration in the app.
   person pushes a project summary.
 - **Re-filing the same `externalThreadId`** appends to the record and replaces
   the *pending* suggestions. Accepted and dismissed ones are never touched.
-  Dedupe is on `(organization_id, external_thread_id)` and **the client is not
-  in the key**, so re-filing the same content under a different `clientId`
-  appends to the record that is already there rather than making a second one.
-  Filing one conversation for two clients on purpose means putting the client
-  in the thread id — `fathom:<token>:<clientId>`, with the trade-off spelled
-  out in `read-communication`.
-- **A re-file cannot move a communication to another client.** An unresolved one
-  can still be attributed by a later filing; a resolved one is fixed, and is
-  corrected by a person in the queue's client picker. The first filing is the
-  cheap moment to get the client right.
+- **A thread belongs to one client.** Dedupe is on
+  `(organization_id, external_thread_id)` and the client is not in the key, so a
+  filing whose thread id is already attributed to a *different* client is
+  **refused before anything is written**: `That thread (…) is already filed
+  against <client>.` An unresolved record can still be attributed by a later
+  filing; a resolved one is corrected by a person in the queue's client picker,
+  which moves the queue row with it. Filing one conversation for two clients on
+  purpose means putting the client in the thread id —
+  `fathom:<call id>:<clientId>`, with the trade-off in `read-communication`.
 
 ## Response
 

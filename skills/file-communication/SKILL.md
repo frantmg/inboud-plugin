@@ -15,9 +15,9 @@ Run this list. Each of these has a specific consequence in the app, and all of
 them are cheaper to fix now.
 
 - [ ] `externalThreadId` set — without it, the next reply mints a second queue
-      item instead of appending. For Fathom it is the **share token** from the
-      URL (`fathom:8f2c1d9e`), never the numeric call id inside the page: the
-      two look equally correct and file one call as two records
+      item instead of appending. For Fathom it is the **numeric call id**
+      (`fathom:811632934`), never the share token from the URL: the token is a
+      revocable credential, and one call filed under both is two records
 - [ ] `occurredAt` is ISO 8601 **with an offset**, and is when the client said
       it, not when you were shown it
 - [ ] participant handles are bare email addresses and E.164 phone numbers —
@@ -51,7 +51,41 @@ file_communication({
 Call it **once**. If it fails, fix what it complained about and call it again
 with the same `externalThreadId` — that is safe by design.
 
+**One failure is not a retry.** When the platform answers
+
+```
+That thread ("fathom:811632934") is already filed against Coastal Spine & Pain.
+```
+
+the thread id you sent belongs to another client's conversation, and nothing was
+written. Do not re-send it without the client, do not mint a variation of the id
+to slip past it, and do not file it unattributed. Say it to the user, naming the
+client the platform named. Either the id was reused and this conversation needs
+its own, or the attribution is genuinely in dispute — and that is a person's
+call in the queue, where changing the client moves the suggestions with it.
+
 ## Reading the result
+
+**Report from the response, never from your plan.** This is a hard rule. What
+you meant to send and what the platform recorded are two different things, and
+only one of them is true for whoever reads your report.
+
+It has already failed exactly here: the plugin told a user
+*"Client: Client 3 (you picked it; verified against its ClickUp folder)"* — its
+own plan, printed as the outcome — while `file_communication` had returned
+Client 4, which is where the communication actually went. The plan was a
+sentence the model wrote; the response was what happened.
+
+So before you say anything, read what came back:
+
+- **`clientId` differs from the one you sent** — lead with that. Do not report
+  success and mention it afterwards: the client is the first thing your report
+  claims, and it was wrong.
+- **`threaded: true` when you expected a new record** — say it appended to an
+  existing communication rather than creating one.
+- **`suggestions` and `matched`** — quote the returned numbers, not the ones you
+  intended to send. Keys that no longer resolve are demoted silently, so
+  `matched` is routinely lower than your plan.
 
 ```json
 {
@@ -104,14 +138,13 @@ suggestion list. The platform replaces the *pending* suggestions and leaves
 anything already accepted or dismissed untouched, so nobody's earlier decision
 is undone.
 
-Same thread id, **same client**. The dedupe key is
-`(organization_id, external_thread_id)` and the client is not in it, so a
-re-file under a different `clientId` appends to the record you already filed
-rather than making a second — and it will not re-attribute one whose client is
-already resolved. Filing one conversation for two clients on purpose is the
-exception that puts the client in the thread id
-(`fathom:<token>:<clientId>`); `read-communication` has the rule and what it
-costs.
+Same thread id, **same client**. The client is not part of the dedupe key, and
+the platform refuses a filing whose thread id already belongs to somebody else
+rather than appending it — so a re-file under a different `clientId` writes
+nothing and comes back as the error above, naming the client that owns the
+thread. Filing one conversation for two clients on purpose is the exception that
+puts the client in the thread id (`fathom:<call id>:<clientId>`);
+`read-communication` has the rule and what it costs.
 
 ## When there is no MCP connection
 

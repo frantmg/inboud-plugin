@@ -127,10 +127,12 @@ Filed. Waiting at /inbound — nothing is work until somebody accepts it.
 
 Then say four things and stop:
 
-- the communication is filed, and against which client — named as ClickUp
-  names it, and how the client was established (derived from the thread, or
-  picked);
-- how many suggestions, how many matched to the catalog;
+- the communication is filed, and against which client — **read back from the
+  response, never from the plan you just printed** (`file-communication` has the
+  rule and the failure it comes from), named as ClickUp names it, and how the
+  client was established;
+- how many suggestions, how many matched to the catalog — the returned counts,
+  not the intended ones;
 - whether it queued at `/inbound` or was auto-filed onto a project (the
   platform auto-files only a communication with nothing to review and exactly
   one active project — a call proposing work always queues);
@@ -146,6 +148,11 @@ transcript — Fathom's "Copy transcript" — and carry on. See
 `externalThreadId` and the full thread. The platform appends rather than
 duplicating, and replaces the pending suggestions while leaving anything
 already accepted or dismissed alone. That is the correct move, not a problem.
+
+**"That thread is already filed against …".** The thread id you sent belongs to
+another client's conversation, and nothing was written. Do not retry around it
+by dropping the client or inventing a variant id — say it to the user, naming
+the client the platform named. See `file-communication`.
 
 **An unmatched suggestion you cannot route.** It still needs a team — an
 unmatched suggestion with no team blocks the whole tray for the person
