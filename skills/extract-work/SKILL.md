@@ -54,7 +54,8 @@ is correct, not a failure.** A short note, a status update, an approval, a
 delay — these are filed so the conversation is on record against the client,
 and the queue has nothing to review. Do not manufacture an item to give the
 filing something to carry: a suggestion like "Campaign launch moved to next
-week" is not a task, it is the summary restated as one, and it costs a
+week" — or the same thing in the imperative, "Push the campaign launch to next
+week" — is not a task, it is the summary restated as one, and it costs a
 reviewer a dismissal every time.
 
 ## One item per unit of work

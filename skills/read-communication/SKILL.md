@@ -13,27 +13,33 @@ items.
 The envelope, in full, is in `reference/ingest-payload.md`. This skill is about
 how to fill it from each kind of input.
 
-## Type, and the one that does not map cleanly
+## Type
 
-The type is required. Four are offered; the platform's `channel` column accepts
-only four values, and they are not the same four:
+The type is required, and it is the `channel`:
 
 | You are told | `channel` | |
 | --- | --- | --- |
 | email | `"email"` | |
 | Fathom | `"fathom"` | a recorded call with a transcript |
 | SMS / text | `"sms"` | |
-| call | `"note"` | **a phone call with no recording** — there is no `call` channel in the schema |
+| a call, a phone call, "rang", "spoke on the phone" | `"phone"` | **a phone call with no recording** |
 
-So a call somebody took notes on files as a `note`, and the subject should say
-what it was: `"Phone call — Coastal Spine — 12 Sep"`. Say this in your report
-rather than silently relabelling it, because the person reading the Comms
-library will filter on channel and a phone call sitting under "note" is only
-findable if they know that is where it went.
+**"Call" is not a channel.** A call is either recorded — `fathom` — or it is a
+phone call, and a phone call is `phone`. Never file one as `note`, and never
+send `call`.
 
-If unrecorded calls turn out to be common, `call` is worth adding to the
-`communications.channel` enum properly — that is a migration in the app, not
-something to paper over here.
+`note` is for something written down with no conversation behind it — the
+`ticket` skill's channel, not this one.
+
+### When a phone call happened
+
+A phone call reported in a sentence carries no timestamp, and `occurredAt` is
+when the client said it. **If the user did not say when the call was, ask** —
+"When was the call with Rob?" — and take the answer as given ("this morning
+around 10" is fine; resolve it to today's date with the user's offset). Never
+fill in today at a round hour, and never default to now: an invented time is
+recorded as fact in the Comms library, and nothing downstream can tell it was
+made up.
 
 ## The dedupe key is the important field
 
@@ -46,7 +52,7 @@ Choose it so that the same conversation always produces the same string:
 | Email | the root message's `Message-ID`, or `References[0]` if you are looking at a reply. No header? `email:<normalized-subject>:<sorted participant handles>` |
 | SMS | `sms:<client number in E.164>` — a text thread with a practice is one continuing conversation, not one per day |
 | Fathom | `fathom:<numeric call id>` — the call's own id, never the share token in the URL |
-| Call (unrecorded) | `call:<client slug>:<ISO date>` |
+| Phone | `phone:<client slug>:<ISO date>` |
 | Pasted note | `note:<client slug>:<ISO date>` |
 
 Normalizing a subject means lowercasing it and stripping every leading `Re:`,
@@ -252,9 +258,9 @@ How to establish it:
 - **Never** default to whoever holds the MCP token. The owner is who is
   accountable, not who ran the tool.
 
-This and the client are the **only two questions** the intake skills ask.
-They survive the rule against asking anything else because they are the two
-answers nobody downstream can reconstruct: the queue can re-word a suggestion,
+This and the client — plus, for a phone call, when it happened — are the
+**only questions** the intake skills ask. They survive the rule against asking
+anything else because they are the answers nobody downstream can reconstruct: the queue can re-word a suggestion,
 re-route it or throw it away, but it cannot work out who was accountable, and
 once a client is set on a communication a re-file cannot move it.
 

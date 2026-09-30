@@ -17,7 +17,7 @@
  * Reads stdin when the path is `-` or omitted.
  */
 
-const CHANNELS = ["sms", "email", "fathom", "note"];
+const CHANNELS = ["sms", "email", "fathom", "phone", "note"];
 
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");

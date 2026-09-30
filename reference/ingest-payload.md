@@ -41,7 +41,7 @@ cannot drift.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `channel` | `"sms" \| "email" \| "fathom" \| "note"` | **Required.** |
+| `channel` | `"sms" \| "email" \| "fathom" \| "phone" \| "note"` | **Required.** `phone` is an unrecorded phone call; `note` is something written down with no conversation behind it. |
 | `externalThreadId` | string, ≤ 400 | The dedupe key, unique per organization — the client is **not** part of it, and a filing naming a different client is refused. Omit it and every post mints a new record. For Fathom it is the numeric call id (`fathom:811632934`), never the revocable share token from the URL. |
 | `occurredAt` | ISO 8601 **with offset** | When the client said it. Defaults to now, which is wrong for anything forwarded. |
 | `participants` | array, ≤ 50, of `{ name, handle, role }` | `handle` is the email address or phone number, and is what attribution matches on. Exactly one carries `role: "owner"` — see below. |

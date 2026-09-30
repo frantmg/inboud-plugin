@@ -44,12 +44,13 @@ platform trusts anything filed this way.
 | | |
 | --- | --- |
 | **Client** | **Required.** Derived from the conversation where possible, asked for where not. |
-| **Type** | **Required.** `email`, `fathom`, `sms` or `call`. |
+| **Type** | **Required.** `email`, `fathom`, `sms` or `phone`. |
 | **Owner** | **Required.** The Macallan person accountable for it. Carried as a participant with `role: "owner"`. |
+| **When** | **Required for a phone call.** Emails, texts and Fathom calls carry their own timestamp; a phone call described in a sentence does not. |
 
-**The client and the owner are the only two questions this skill may ask**, and
-only when the answer is not already in front of it. The type is read off the
-shape of the input, never asked.
+**The client, the owner and — for a phone call — when it happened are the only
+questions this skill may ask**, and only when the answer is not already in
+front of it. The type is read off the shape of the input, never asked.
 
 **Deriving the client is still the first attempt** — a thread carries a name,
 an address or a number, and `list_clients` turns any of those into a record
@@ -58,8 +59,8 @@ comes up empty, **ask** rather than filing it unresolved. Use the `pick-client`
 skill; it lists the ClickUp folders and resolves the chosen one to a verified
 `clientId`.
 
-`call` is not one of the platform's four channels — see `read-communication`
-for how it is filed.
+"Call" is not its own type: a recorded call is `fathom`, anything else is
+`phone`. See `read-communication`.
 
 ## The pipeline
 
@@ -85,12 +86,14 @@ matching needs the catalog, routing needs to know what stayed unmatched.
 
 ## Ask only what is missing, then file
 
-Two questions, and each one only when the answer is not already there:
+At most three questions, and each one only when the answer is not already
+there. Ask whichever are missing together, in one message:
 
 | | |
 | --- | --- |
 | **The client** | Derive it first — a name, an address or a number in the thread, through `list_clients`. Ask with `pick-client` only where that comes up empty. |
 | **The owner** | Named by the user already? Use it. Exactly one Macallan participant on the thread? Propose them in one line and take the yes. Several, or none? Ask. |
+| **When (phone only)** | Did the user say when the call was? Use it. Otherwise ask. Never assume today, now, or a round hour. |
 
 **Nothing else stops, and there is no "file this?" at the end.** The type comes
 from the shape of the input, the matches come from the catalog, the teams come
@@ -138,7 +141,7 @@ Filed. Waiting at /inbound — nothing is work until somebody accepts it.
 When nothing was suggested, say so instead of a team breakdown:
 
 ```
-Note - Client 1 - 30 Sep 2026
+Phone call - Client 1 - 30 Sep 2026, 10:00 CT
 Client: Client 1 (you named it; verified against its ClickUp folder)
 Owner:  Fran Melo
 No suggested tasks - this is a status update, not new work.
