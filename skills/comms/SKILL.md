@@ -1,14 +1,21 @@
 ---
 name: comms
-description: Turn a whole client conversation into a filed inbound with suggested tasks. Use when the user pastes an email or email thread, a text message conversation, a Fathom share link or a call transcript from a healthcare client, or says anything like "file this call", "what work does this email imply", "put this in the queue", "make tasks from this". Runs the whole pipeline - read, extract, match to services, route to teams, file - and hands the result to a person to accept in Macallan Onboarding. For one known piece of work with no conversation behind it, use the `ticket` skill instead.
+description: Turn a whole client conversation into a filed inbound, with suggested tasks only where it implies new work. Use when the user pastes an email or email thread, a text message conversation, a Fathom share link or a call transcript from a healthcare client, or says anything like "file this call", "what work does this email imply", "put this in the queue", "make tasks from this". Runs the whole pipeline - read, extract, match to services, route to teams, file - and hands the result to a person to accept in Macallan Onboarding. For one known piece of work with no conversation behind it, use the `ticket` skill instead.
 ---
 
 # A client conversation
 
 One job: a conversation with a client arrives here — an email thread, a run of
-texts, a recorded call — and a reviewable **inbound communication with
-suggested tasks, grouped by team** ends up in Macallan Onboarding. A person then opens `/inbound`, accepts what is real, and starts or
-extends a project from it.
+texts, a recorded call — and a reviewable **inbound communication** ends up
+in Macallan Onboarding, carrying **suggested tasks, grouped by team, when the
+conversation implies work**. A person then opens `/inbound`, accepts what is
+real, and starts or extends a project from it.
+
+**Not every communication is work.** "Rob says we can wait until next week to
+launch" is a status update on work that already exists: it is filed so it is on
+record against the client, with the update in its `summary` and **no
+suggestions at all**. `extract-work` has the test; zero items is a normal
+result, and inventing one to restate the update as a task is the failure.
 
 ## What this is not allowed to do
 
@@ -63,11 +70,14 @@ you get there rather than guessing.
 | --- | --- | --- |
 | 1. Normalize the input | `read-communication` | channel, externalThreadId, occurredAt, participants, subject, transcript, summary |
 | 2. Load the catalog | `service-catalog` | live services, tickets, teams, categories |
-| 3. Extract the work | `extract-work` | a list of work items, each with a verbatim source excerpt |
+| 3. Extract the work | `extract-work` | a list of work items, each with a verbatim source excerpt — possibly empty |
 | 4. Match to the catalog | `match-services` | serviceKey/stepKey on the items that are catalog work |
 | 5. Route the rest | `route-teams` | a team name on every unmatched item |
 | 6. File it | `file-communication` | one `file_communication` call, and what came back |
 | 7. Report | this skill | the grouped plan, as the record of what went in |
+
+When step 3 comes back empty, skip 4 and 5 and file the communication with
+`suggestions: []`. Do not go back and look harder for something to suggest.
 
 Steps 2 and 1 are independent — load the catalog while you are still reading
 the transcript if it saves a round trip. Everything else is sequential:
@@ -125,6 +135,18 @@ Technology (2)
 Filed. Waiting at /inbound — nothing is work until somebody accepts it.
 ```
 
+When nothing was suggested, say so instead of a team breakdown:
+
+```
+Note - Client 1 - 30 Sep 2026
+Client: Client 1 (you named it; verified against its ClickUp folder)
+Owner:  Fran Melo
+No suggested tasks - this is a status update, not new work.
+Summary: Rob approved moving the campaign launch to next week.
+
+Filed on record.
+```
+
 Then say four things and stop:
 
 - the communication is filed, and against which client — **read back from the
@@ -132,10 +154,11 @@ Then say four things and stop:
   rule and the failure it comes from), named as ClickUp names it, and how the
   client was established;
 - how many suggestions, how many matched to the catalog — the returned counts,
-  not the intended ones;
+  not the intended ones (zero is a fine answer; say it plainly);
 - whether it queued at `/inbound` or was auto-filed onto a project (the
   platform auto-files only a communication with nothing to review and exactly
-  one active project — a call proposing work always queues);
+  one active project — a call proposing work always queues, and a
+  suggestion-free one may well auto-file);
 - what has **not** happened: no tasks, no ClickUp, no project.
 
 ## Things that go wrong, and what to do

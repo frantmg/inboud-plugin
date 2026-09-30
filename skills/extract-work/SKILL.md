@@ -20,7 +20,8 @@ Include:
 - an explicit request — "can you redo the intake form"
 - a commitment someone from Macallan made on the call — "we'll get the spine
   campaign live before October"
-- a change to something already running — "move the newsletter to fortnightly"
+- a change to something already running that somebody has to go and make —
+  "move the newsletter to fortnightly" means reconfiguring the send
 - a blocker Macallan has to chase — "we still need EHR credentials from you"
   is work for whoever chases it
 
@@ -31,6 +32,30 @@ Exclude:
 - anything already done and merely reported on
 - pricing and contract negotiation, unless it produces a deliverable
 - the client's own internal to-dos that nobody at Macallan touches
+- **status and timing updates on work already in flight** — "we can wait until
+  next week to launch the campaign", "go ahead with the draft", "the budget is
+  approved". The client is telling Macallan something about work that already
+  exists; it is context for that work, not new work. It belongs in the
+  communication's `summary`, where the reviewer and the project both see it,
+  not in a suggestion
+- acknowledgements, thanks, check-ins and FYIs that ask for nothing
+
+The test: **would somebody at Macallan have to start something they would not
+otherwise have started?** A launch that slips a week is the same launch, done
+later — nobody opens a new task for it. A launch that slips a week *and* needs
+the ads re-scheduled in the platform by Friday is a task, because that
+re-scheduling is a new piece of work with an owner. If you cannot name the
+action, it is not an item.
+
+## Zero is a valid answer
+
+Many communications imply no work at all, and **filing one with no suggestions
+is correct, not a failure.** A short note, a status update, an approval, a
+delay — these are filed so the conversation is on record against the client,
+and the queue has nothing to review. Do not manufacture an item to give the
+filing something to carry: a suggestion like "Campaign launch moved to next
+week" is not a task, it is the summary restated as one, and it costs a
+reviewer a dismissal every time.
 
 ## One item per unit of work
 
@@ -42,9 +67,10 @@ with less context than you have now.
 Equally: an ask restated four times across a 45-minute call is **one** item.
 Merge, do not count mentions.
 
-A useful sanity check — a 45-minute discovery call usually yields between
-three and twelve items. Thirty means you are splitting sub-tasks out of tasks.
-One means you skimmed.
+A useful sanity check, **for a 45-minute discovery call only** — it usually
+yields between three and twelve items. Thirty means you are splitting sub-tasks
+out of tasks; one means you skimmed. It says nothing about an email, a text or
+a one-line note, where zero or one is normal.
 
 ## Every item carries the words it came from
 

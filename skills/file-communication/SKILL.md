@@ -22,6 +22,8 @@ them are cheaper to fix now.
       it, not when you were shown it
 - [ ] participant handles are bare email addresses and E.164 phone numbers —
       this is how attribution finds the client
+- [ ] `suggestions` may be `[]` — a status update or a note that implies no
+      work is filed with none, and that is correct; never pad it
 - [ ] every suggestion has a `sourceExcerpt` quoted from the transcript
 - [ ] every **matched** suggestion's `serviceKey`/`stepKey` came from
       `get_service` in this session, both present, copied verbatim
@@ -112,7 +114,8 @@ So before you say anything, read what came back:
 - **`queued: true`** — it is waiting at `/inbound` for a person.
 - **`filedToProjectId` set** — the platform auto-filed it onto a project
   without queueing, which happens only when there was nothing to review and the
-  client had exactly one active project. A communication carrying suggestions
+  client had exactly one active project. That is the expected outcome for a
+  communication filed with no suggestions. A communication carrying suggestions
   always queues, so if you filed suggestions and see an id, something is off
   worth mentioning.
 - **`matched` lower than you expected** — keys that do not resolve against the
