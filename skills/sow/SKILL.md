@@ -228,25 +228,25 @@ Brief date: 8 Oct 2026 (signature date; effective date blank) · Launch: Novembe
 
 ### Creative (7)
 
-| # | Task | SOW section(s) | Catalog match | Notes |
-| --- | --- | --- | --- | --- |
-| 1 | Logo update: primary and endorsed versions | §2.1 Logo update | Unmatched | Creative brief · gap: Fonts |
-| 2 | Brand standards guide and final logo files | §2.1 Brand standards | Unmatched | Creative brief |
-| … | | | | |
+| # | Task | SOW section(s) |
+| --- | --- | --- |
+| 1 | Logo update: primary and endorsed versions | §2.1 Logo update |
+| 2 | Brand standards guide and final logo files | §2.1 Brand standards |
+| … | | |
 
 ### Marketing (10)
 
-| # | Task | SOW section(s) | Catalog match | Notes |
-| --- | --- | --- | --- | --- |
-| 8 | Google Ads campaigns: build, then manage | §2.5 Campaign builds, §3.1 Google Ads | `paid.google-search-ads-gbp` | $4,000/mo media · 3 locations |
-| … | | | | |
+| # | Task | SOW section(s) |
+| --- | --- | --- |
+| 8 | Google Ads campaigns: build, then manage | §2.5 Campaign builds, §3.1 Google Ads |
+| … | | |
 
 ### Operations (2)
 
-| # | Task | SOW section(s) | Catalog match | Notes |
-| --- | --- | --- | --- | --- |
-| 20 | Staff training on lead handling and reporting | §2.5 Team training | Unmatched | |
-| 21 | Open Items & Blockers | §7 Client Responsibilities, §2.4 Distribution | `blockers.open-items-blockers` | Access, staff contact, 5-day approvals, clinical review, name updates, wire package choice |
+| # | Task | SOW section(s) |
+| --- | --- | --- |
+| 20 | Staff training on lead handling and reporting | §2.5 Team training |
+| 21 | Open Items & Blockers | §7 Client Responsibilities, §2.4 Distribution |
 
 **Skip on the brief screen:** `video.testimonials-educational-social` (comes in with `video`, not in the SOW)
 **Not in scope:** §4.1 Video and photo production day ($15,000 + travel, optional) · §4.2 Additional design support ($225/h)
@@ -259,6 +259,9 @@ The rules for the tables:
 
 - **One table per team**, headed `### <Team name> (<count>)`, in the order
   `list_teams` returns them. Skip a team with no tasks.
+- **Three columns, no more**: `#`, Task, SOW section(s). The catalog match,
+  budgets, gaps and dependencies are worked out all the same and go onto the
+  tasks themselves; they are not columns in the proposal.
 - **`#` runs across all the tables** (1 to N, not restarting per team), so the
   user can say "drop 14" or "move 19 to Technology" unambiguously.
 - **Task** is the title the task will carry, written bare (no team prefix).
@@ -267,12 +270,6 @@ The rules for the tables:
   places lists both, `§2.5 Campaign builds, §3.1 Google Ads`. **Every row has
   one.** A task you cannot tie to a section is not in the SOW, so it does not
   belong in the project.
-- **Catalog match** is the `serviceKey.stepKey` in code formatting, or
-  `Unmatched`. A Creative task that fits a ticket but is staged directly says
-  `Unmatched (fits web.website-scope)`, so the reason is visible.
-- **Notes** holds what the reviewer should know: `Creative brief` and its gaps,
-  the budget, the locations, what it depends on, a routing guess. Keep it short
-  (one line, a few phrases). Leave it empty when there is nothing to say.
 - **Open Items & Blockers is a row**, in the table of its ticket's team, citing
   the client-responsibility section and any third-party decision.
 - Under the tables: what to skip on the brief screen, what is out of scope (with
@@ -347,7 +344,7 @@ below them:
 Client: Mountain Orthopaedics & Spine · Owner: Fran Melo · 21 tasks across 4 teams
 
 ### Creative (7)
-| # | Task | SOW section(s) | Catalog match | Notes |
+| # | Task | SOW section(s) |
 | … |
 
 Skip on the brief screen: video.testimonials-educational-social
