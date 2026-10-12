@@ -96,6 +96,11 @@ anything the reviewer needs to decide whether this is real. Quote dates and
 numbers exactly. Do not paste the transcript back — the transcript is already
 attached to the communication.
 
+**Creative work has a fixed format.** Once an item's team is known to be
+Creative, by its matched ticket or by routing, its description is rewritten in
+the `creative-brief` format (Objective, Specs, Resource, Deliverables,
+Acceptance, Handoff). Gaps are written as `_Not captured_`, never guessed.
+
 **Confidence** — a number between 0 and 1, and it should mean something:
 
 | | |

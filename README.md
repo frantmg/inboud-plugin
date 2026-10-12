@@ -1,17 +1,21 @@
 # Macallan Intake
 
 A Claude plugin that turns something a client said — an email thread, a text
-message conversation, a Fathom call — into a reviewable **inbound communication
-with suggested tasks** inside [Macallan Onboarding], grouped by the team that
-would do the work.
+message conversation, a Fathom call, a phone call — into a reviewable **inbound
+communication with suggested tasks** inside [Macallan Onboarding], grouped by
+the team that would do the work.
 
 A person then opens `/inbound`, accepts what is real, and starts or extends a
 project from it. That review is the point of the whole thing.
 
+A signed **Statement of Work** takes the other route: `sow` reads it and builds
+the **draft project** it describes, with every task staged and routed to its
+team, for a person to review and push.
+
 ## What it does
 
 ```
-email / SMS / Fathom link
+email / SMS / Fathom link / phone call
         │
         ├─ read it            normalize into one envelope: channel, thread id,
         │                     time, participants, transcript, summary
@@ -20,22 +24,42 @@ email / SMS / Fathom link
         │                     words it came from
         ├─ match              (serviceKey, stepKey) where a ticket covers it
         ├─ route              a team on everything that stayed unmatched
-        ├─ ask what's missing the client and the owner, nothing else
+        ├─ brief creative     Creative work in the fixed creative brief format
+        ├─ ask what's missing the client, the owner, and when a phone call was
         └─ file it            one file_communication call
                                     │
                               waiting at /inbound
 ```
 
+And from an SOW:
+
+```
+signed SOW (PDF / Word / text)
+        │
+        ├─ read it            header, deliverables per phase, timeline,
+        │                     budgets, exclusions, client responsibilities
+        ├─ client + owner     from the ClickUp folders; the owner is asked
+        ├─ work items         one per deliverable a single team owns
+        ├─ match + route      catalog ticket where one covers it, team otherwise
+        ├─ map team lists     every team used has a list in the client's folder
+        └─ build the draft    create_project → set_project_scope →
+                              answer_brief_question → create_task → update
+                                    │
+                              summary screen, for a person to push
+```
+
 ## What it deliberately cannot do
 
-**Everything it does ends at `/inbound`.** There is no other destination.
+**A conversation or a ticket ends at `/inbound`. An SOW ends at a draft
+project.** Neither reaches ClickUp.
 
-- **It cannot create work.** Suggestions land in `task_candidates` as
-  proposals. A person accepts them.
-- **It cannot create a project.** `create_project`, `set_project_scope` and
-  `create_task` are never called. A project is built from the queue, which
-  sweeps the filed suggestions onto it — something this plugin could not do
-  even if it made one.
+- **It cannot create work from a conversation.** Suggestions land in
+  `task_candidates` as proposals, and a person accepts them. Only a signed SOW
+  stages tasks directly, because the client has already agreed to them.
+- **Only `sow` creates a project, and only as a draft.** `comms` and `ticket`
+  never call `create_project`, `set_project_scope` or `create_task`. A project
+  for a conversation is built from the queue, which sweeps the filed
+  suggestions onto it.
 - **It cannot reach ClickUp.** Tasks get there when somebody pushes a project
   summary in the app. No tool in the connector pushes.
 - **It cannot invent a client.** A client is its ClickUp folder. Every flow
@@ -72,16 +96,23 @@ the connector is stateless and re-authenticates every request.
 ```
 /intake:comms     …then paste the email, the messages, or a Fathom link
 /intake:ticket    …one piece of work you already know about
+/intake:sow       …attach or paste a signed SOW
 /intake:catalog   …show the live services, tickets and teams
 ```
 
 `comms` mines a whole conversation and derives the client from what is in it.
 `ticket` files one known job and takes its client from the ClickUp folders
-rather than from typed text. Both need a **client** and an **owner**, and those
-are the **only two things either one will stop and ask you for** — and only
-when they are not already known. Everything else is derived, and neither waits
-for a "file this?" at the end, because the review it would be asking for is the
-queue itself. Both end at `/inbound`.
+rather than from typed text. `sow` builds the draft project a signed SOW describes.
+All three need a **client** and an **owner**, and those are what they stop and
+ask you for, only when not already known. Beyond that: `comms` asks when a phone
+call happened, `ticket` may ask once about missing creative specifics, and `sow`
+asks which ClickUp list a team uses when it cannot tell by name. Everything else is derived, and none of them waits
+for a "file this?" at the end. The review it would be asking for is the queue,
+or the project's summary screen.
+
+**Every Creative task** is written in one fixed brief format (Objective, Specs,
+Resource, Deliverables, Acceptance, Handoff), whichever skill wrote it. Gaps are
+marked `_Not captured_`, never guessed.
 
 Or just paste the content and say what you want — the skills describe their own
 triggers, so "file this call" and "what work does this email imply" both land
@@ -93,8 +124,10 @@ in the right place.
 skills/
   comms/                 the conversation pipeline, the hard rules, the report
   ticket/                one known job; client + title + description required
+  sow/                   a signed SOW → a draft project with staged tasks
+  creative-brief/        the fixed format every Creative task is written in
   pick-client/           the ClickUp-folder client picker, shared by both
-  read-communication/    email, SMS, Fathom → one envelope; the dedupe key
+  read-communication/    email, SMS, Fathom, phone → one envelope; the dedupe key
   service-catalog/       loading the live catalog; what the shapes mean
   extract-work/          what counts as work, and what a good item looks like
   match-services/        when a ticket covers an ask, and when to leave it alone
@@ -107,6 +140,7 @@ reference/
   building-a-project.md  what a project needs, and why the queue builds it
   platform-model.md      the platform's rules, and why they exist
   worked-example.md      one Fathom call, end to end
+  sow-worked-example.md  one signed SOW, end to end
   example-payload.json
 scripts/
   file-communication.mjs fallback over POST /api/inbound/communication

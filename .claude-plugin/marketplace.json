@@ -8,8 +8,8 @@
     {
       "name": "intake",
       "displayName": "Macallan Intake",
-      "version": "0.1.0",
-      "description": "Turn a client email, text or Fathom call into a reviewed inbound with suggested tasks, matched to services and routed to teams.",
+      "version": "0.2.0",
+      "description": "Turn a client email, text, Fathom or phone call into a reviewed inbound with suggested tasks, and a signed SOW into a draft project, matched to services and routed to teams.",
       "author": {
         "name": "The Macallan Group"
       },

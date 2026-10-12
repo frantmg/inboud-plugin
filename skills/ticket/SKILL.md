@@ -23,7 +23,8 @@ around it. Nothing here creates a task and nothing reaches ClickUp.
 | **Description** | Written from the user's own words. Never a question. |
 | **Service** | Optional — attached when a catalog ticket genuinely covers it. |
 
-**The client and the owner are the only questions here.** A one-line ask with
+**The client and the owner are the only questions here**, plus one round on
+missing specifics when the work is Creative's (see `creative-brief`). A one-line ask with
 no detail still files: write the description from the user's own words, and
 **say in the report that the detail is thin**. The person accepting it at
 `/inbound` can see a description that barely extends its title, and can edit it
@@ -66,7 +67,9 @@ carry a `team`, spelled as the team **name** from `list_teams`. See
 
 **Write it** — a title that reads on its own in a list of forty, and a
 description with the constraints, the deadline and who asked. See
-`extract-work` for what good looks like.
+`extract-work` for what good looks like. **When the team is Creative**, the
+description is the `creative-brief` format, and that skill says when one round
+of questions about missing specifics is allowed here.
 
 ### The source excerpt, honestly
 
@@ -128,11 +131,14 @@ the failure it prevents.
 
 ## Building a project around it
 
-**This plugin never creates one.** If the user asks, the answer is the queue:
+**This skill never creates one.** If the user asks, the answer is the queue:
 "New project…" on the item at `/inbound` sweeps every pending suggestion onto
 the project it creates, and there is no MCP tool here that accepts a candidate,
 so a project made from this side would come out empty with the work stranded
 behind it.
+
+The one exception is a signed **SOW**. That is the `sow` skill, which builds a
+draft project directly, because the client has already agreed to the work.
 
 What a person needs when they build it: a verified client, **at least one
 ticket**, the services any matched tickets belong to, and an **owner, always

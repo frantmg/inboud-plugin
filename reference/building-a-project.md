@@ -1,29 +1,35 @@
 # Building a project
 
-**This plugin never creates one.** Everything it does ends at `/inbound`.
+**Two routes, and they end in different places.**
 
-That is not a limitation to apologise for or route around. It is the line that
-makes the whole thing safe to point at a client's transcripts: the widest thing
-a leaked token, a bad prompt or a confidently wrong reading can produce is a row
-somebody still has to accept.
+| Input | Skill | Ends at |
+| --- | --- | --- |
+| a conversation (email, text, Fathom, phone) | `comms` | `/inbound`, as suggestions |
+| one known job | `ticket` | `/inbound`, as one suggestion |
+| a signed SOW | `sow` | a **draft project**, with staged tasks |
 
-## What the plugin does with a project
+A conversation implies work somebody has to confirm, so it goes through the
+queue. An SOW *is* the confirmation: the client signed for exactly that list.
+So `sow` is the one skill that builds a project, and it still stops at a staged
+draft that a person pushes.
 
-Names it. Nothing else.
+## What each route may do
 
-| | |
-| --- | --- |
-| Create a project | **No.** `create_project` is not called, ever. |
-| Set a project's scope | **No.** `set_project_scope` is not called. |
-| Stage a task on a project | **No.** `create_task` is not called. |
-| Create a ClickUp task | **No.** Nothing in the connector can, by design. |
-| File a communication or a ticket into the queue | **Yes.** This is the whole job. |
+| | `comms` / `ticket` | `sow` |
+| --- | --- | --- |
+| Create a project | **No.** | **Yes**, as a draft |
+| Set a project's scope | **No.** | **Yes**, for non-Creative matched services |
+| Answer brief questions | **No.** | **Yes**, only with what the SOW states |
+| Stage a task on a project | **No.** | **Yes**, for Creative and unmatched work |
+| Map a team to a ClickUp list | Offered | When a task needs it |
+| File a communication or ticket into the queue | **Yes.** This is the whole job. | No |
+| Create a ClickUp task | **No.** Nothing in the connector can, by design. | **No.** |
 
-If the user asks for a project, the answer is the queue — said plainly, once,
-without hedging. Not "I can't", but "that is built at `/inbound`, and here is
-why that is better".
+If a user asks `comms` or `ticket` for a project, the answer is the queue,
+said plainly and once, without hedging. Not "I can't", but "that is built at
+`/inbound`, and here is why that is better".
 
-## Why the queue is genuinely the right place
+## Why the queue is the right place for a conversation
 
 **It sweeps the work onto the project.** Choosing "New project…" on an item at
 `/inbound` accepts every pending suggestion onto the new project, files the
@@ -62,5 +68,6 @@ client's ClickUp folder when somebody reviews the summary screen and presses
 push — one batch a person looked at, rather than a stream of things that
 already happened.
 
-Never tell a user work has been created, a project exists, or anything is in
-ClickUp. None of it is true of anything this plugin did.
+Never tell a user work has been created or that anything is in ClickUp. For
+`comms` and `ticket`, no project exists either. For `sow`, a *draft* project
+exists with *staged* tasks, and that is exactly how to describe it.

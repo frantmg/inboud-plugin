@@ -29,8 +29,8 @@ platform trusts anything filed this way.
    stay proposals until a person accepts one in the queue. Never tell the user
    tasks were created.
 3. **Nothing reaches ClickUp, and no project is created.** `create_project`,
-   `set_project_scope` and `create_task` are never called, and nothing in the
-   connector can reach ClickUp at all. Tasks appear in a client's folder when
+   `set_project_scope` and `create_task` are never called from this skill (only
+   `sow` builds a project), and nothing in the connector can reach ClickUp at all. Tasks appear in a client's folder when
    somebody reviews a project summary in the app and presses push.
 4. **A client is its ClickUp folder.** Never invent a client. The platform
    will accept an unattributed communication and let a person resolve it in the
@@ -74,6 +74,7 @@ you get there rather than guessing.
 | 3. Extract the work | `extract-work` | a list of work items, each with a verbatim source excerpt — possibly empty |
 | 4. Match to the catalog | `match-services` | serviceKey/stepKey on the items that are catalog work |
 | 5. Route the rest | `route-teams` | a team name on every unmatched item |
+| 5b. Brief the creative work | `creative-brief` | every item whose team is Creative, matched or routed, rewritten in the fixed brief format |
 | 6. File it | `file-communication` | one `file_communication` call, and what came back |
 | 7. Report | this skill | the grouped plan, as the record of what went in |
 
@@ -199,11 +200,14 @@ missing.
 
 ## Building a project around it
 
-**This plugin never creates one.** If the user asks, the answer is the queue:
+**This skill never creates one.** If the user asks, the answer is the queue:
 "New project…" on the item at `/inbound` sweeps every pending suggestion onto
 the project it creates, and there is no MCP tool here that accepts a candidate,
 so a project made from this side would come out empty with the work stranded
 behind it.
+
+The one exception is a signed **SOW**. That is the `sow` skill, which builds a
+draft project directly, because the client has already agreed to the work.
 
 What a person needs when they build it: a verified client, **at least one
 ticket**, the services any matched tickets belong to, and an **owner, always

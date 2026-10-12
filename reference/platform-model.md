@@ -13,8 +13,10 @@ plugin is designed around them.
 | **Task** | work someone will do. Every row is a commitment | `tasks` |
 | **Inbound item** | something that arrived unasked and still needs a decision | `inbound` |
 
-This plugin writes a communication and its suggested tasks. It never writes a
-task, and nothing it can call reaches ClickUp.
+`comms` and `ticket` write a communication and its suggested tasks, never a
+task. `sow` writes a draft project and staged tasks, because a signed SOW is
+already the confirmation the queue exists to get. Nothing any of them can call
+reaches ClickUp.
 
 ## A client is its ClickUp folder
 
