@@ -33,6 +33,9 @@ none → ask. The owner was not named, so it is asked.
 
 ## 5–6. Work items, matched and routed
 
+This is the working table. What the user sees is the same rows split into one
+table per team, in the format of **The proposal** in the skill.
+
 | # | Item | SOW | Team | How it is staged |
 | --- | --- | --- | --- | --- |
 | 1 | Logo update: primary and endorsed versions | §2.1 | Creative | `create_task` (creative brief) |
@@ -55,6 +58,7 @@ none → ask. The owner was not named, so it is asked.
 | 18 | Call, missed-call, form and conversion tracking: set up, then run | §2.5, §3.4 | Technology | `create_task`; `ghl.lead-tracking-pipeline` is close, but scoping GHL Space Build brings in three tickets the SOW does not buy |
 | 19 | Monthly lead, call and booking report by channel and location | §3.4 | Technology | `create_task`; routing is a guess (the SOW files it under tracking) |
 | 20 | Staff training on lead handling and reporting | §2.5 | Operations | `create_task` |
+| 21 | Open Items & Blockers | §7, §2.4 | Operations | always in scope → `blockers.open-items-blockers`, answered with the §7 responsibilities and the wire package choice |
 
 These decisions follow the SOW rules in the skill:
 

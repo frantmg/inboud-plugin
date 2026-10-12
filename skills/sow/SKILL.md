@@ -1,6 +1,6 @@
 ---
 name: sow
-description: Read a signed Statement of Work and build the draft project it describes in Macallan Onboarding - every service it sells, broken into tasks routed to the right teams, matched to the live catalog where a ticket covers the work, with the brief answered from what the SOW states. Use when the user shares an SOW (PDF, Word document or pasted text), or says anything like "set up the project from this SOW", "what does this SOW commit us to", "build the project for this contract". Stops at a staged draft; a person reviews the summary in the app and pushes it to ClickUp.
+description: Read a signed Statement of Work, propose the project it describes as one table per team with every task tied to its SOW section, and on the go build that draft project in Macallan Onboarding - every service it sells, broken into tasks routed to the right teams, matched to the live catalog where a ticket covers the work, with the brief answered from what the SOW states. Use when the user shares an SOW (PDF, Word document or pasted text), or says anything like "set up the project from this SOW", "what does this SOW commit us to", "build the project for this contract". Stops at a staged draft; a person reviews the summary in the app and pushes it to ClickUp.
 ---
 
 # A Statement of Work
@@ -47,9 +47,15 @@ known:
 | **The client** | An SOW names a legal entity ("Redefine Health Utah LLC") and usually a practice ("Mountain Orthopaedics & Spine"). Query the ClickUp folders with both through `pick-client`. Exactly one unambiguous folder: say which, and carry on. Otherwise ask. |
 | **The owner** | The Macallan person accountable for the project. Named by the user? Use it. Otherwise **ask**. Never infer it from who signed the SOW, and never default it to whoever holds the token. |
 
-Ask whichever are missing together, in one message. There is no "create
-this?" at the end. The summary screen in the app is the review: it shows every
-staged task, grouped by team, before anything is pushed.
+Ask whichever are missing together, in one message. It can go in the same
+message as the proposal (below), so the user answers everything at once.
+
+**Then it always proposes before it builds.** An SOW turns into a project and
+twenty-odd tasks in one go, so the user sees the whole breakdown first: one
+table per team, every task tied to its SOW section (see **The proposal**). It
+builds once the user says go, or applies their corrections and builds. It does
+not ask about each task one by one. The proposal is one message, and the answer
+to it is one reply.
 
 What still stops you is missing **evidence**: an SOW you cannot read, or a
 practice with no ClickUp folder (it is not a client yet).
@@ -66,8 +72,9 @@ practice with no ClickUp folder (it is not a client yet).
 | 6. Match and route | `match-services`, `route-teams`, the SOW rules below | a ticket or a team on every item |
 | 7. Write the descriptions | `creative-brief` for Creative, below for the rest | a description per task |
 | 8. Map the teams' lists | `get_client`, `list_clickup_lists`, `map_team_lists` | every team used has a list for this client |
+| 8b. **Propose** | **The proposal**, below | one table per team; wait for the go |
 | 9. Build the draft | the calls below, in order | a project with scope, answers and staged tasks |
-| 10. Report | from `get_project`, below | what was staged, and what is still open |
+| 10. Report | from `get_project`, in the same tables | what was staged, and what is still open |
 
 Steps 1, 2 and 4 are independent, so run them together if that saves a round
 trip.
@@ -188,6 +195,10 @@ Others...).
 
 ## 8. Every team needs a list before tasks can be staged
 
+Work out the mapping now, but **make it after the go**, with the build. The
+proposal says which mappings will be made and asks about any it cannot make by
+name.
+
 `create_task` refuses a team with no ClickUp list mapped for this client. So
 before building, check the mapping:
 
@@ -202,6 +213,75 @@ say so in the report. Mapping is configuration, not work. Where a team has
 no list, or several plausible ones, ask. It is the one question allowed
 beyond the client and the owner, because without the answer the task cannot be
 staged at all.
+
+## The proposal
+
+Before anything is written (no `create_project`, no `map_team_lists`), show
+the project as it would be built, in this shape. **Always this shape**, for
+every SOW:
+
+````markdown
+**Mountain Orthopaedics & Spine Rebrand and Patient Growth Program**
+Client: Mountain Orthopaedics & Spine (ClickUp folder) · Owner: Fran Melo
+Brief date: 8 Oct 2026 (signature date; effective date blank) · Launch: November (no day in the SOW)
+21 tasks across 4 teams · In scope: `paid`, `content`, `video`, plus Open Items & Blockers
+
+### Creative (7)
+
+| # | Task | SOW section(s) | Catalog match | Notes |
+| --- | --- | --- | --- | --- |
+| 1 | Logo update: primary and endorsed versions | §2.1 Logo update | Unmatched | Creative brief · gap: Fonts |
+| 2 | Brand standards guide and final logo files | §2.1 Brand standards | Unmatched | Creative brief |
+| … | | | | |
+
+### Marketing (10)
+
+| # | Task | SOW section(s) | Catalog match | Notes |
+| --- | --- | --- | --- | --- |
+| 8 | Google Ads campaigns: build, then manage | §2.5 Campaign builds, §3.1 Google Ads | `paid.google-search-ads-gbp` | $4,000/mo media · 3 locations |
+| … | | | | |
+
+### Operations (2)
+
+| # | Task | SOW section(s) | Catalog match | Notes |
+| --- | --- | --- | --- | --- |
+| 20 | Staff training on lead handling and reporting | §2.5 Team training | Unmatched | |
+| 21 | Open Items & Blockers | §7 Client Responsibilities, §2.4 Distribution | `blockers.open-items-blockers` | Access, staff contact, 5-day approvals, clinical review, name updates, wire package choice |
+
+**Skip on the brief screen:** `video.testimonials-educational-social` (comes in with `video`, not in the SOW)
+**Not in scope:** §4.1 Video and photo production day ($15,000 + travel, optional) · §4.2 Additional design support ($225/h)
+**Team lists:** Marketing → "Marketing & Advertising" (name match) · Technology: no list found, which one?
+
+Build this draft? Say go, or tell me what to change.
+````
+
+The rules for the tables:
+
+- **One table per team**, headed `### <Team name> (<count>)`, in the order
+  `list_teams` returns them. Skip a team with no tasks.
+- **`#` runs across all the tables** (1 to N, not restarting per team), so the
+  user can say "drop 14" or "move 19 to Technology" unambiguously.
+- **Task** is the title the task will carry, written bare (no team prefix).
+- **SOW section(s)** is every clause the task comes from: the section number
+  and the SOW's own label for it, `§2.5 Team training`. A task drawn from two
+  places lists both, `§2.5 Campaign builds, §3.1 Google Ads`. **Every row has
+  one.** A task you cannot tie to a section is not in the SOW, so it does not
+  belong in the project.
+- **Catalog match** is the `serviceKey.stepKey` in code formatting, or
+  `Unmatched`. A Creative task that fits a ticket but is staged directly says
+  `Unmatched (fits web.website-scope)`, so the reason is visible.
+- **Notes** holds what the reviewer should know: `Creative brief` and its gaps,
+  the budget, the locations, what it depends on, a routing guess. Keep it short
+  (one line, a few phrases). Leave it empty when there is nothing to say.
+- **Open Items & Blockers is a row**, in the table of its ticket's team, citing
+  the client-responsibility section and any third-party decision.
+- Under the tables: what to skip on the brief screen, what is out of scope (with
+  its section), and the team-list mappings that will be made or that need an
+  answer.
+
+**Changes come back as edits to the tables.** When the user asks for one, apply
+it, and show the tables again only if more than a row or two changed.
+Otherwise confirm the change in a line and build.
 
 ## 9. Building the draft
 
@@ -256,24 +336,22 @@ Read `get_project` and report **from the response, not from the plan**. Use
 the same rule and the same reason as `file-communication`: what you meant to
 stage and what the app recorded can differ.
 
-```
-Draft project - Mountain Orthopaedics & Spine Rebrand and Patient Growth Program
-Client: Mountain Orthopaedics & Spine (ClickUp folder)
-Owner:  Fran Melo · Brief date 8 Oct 2026 · Launch: November (no day in the SOW)
-20 tasks across 4 teams · paid, content, video in scope (+ Open Items)
+It uses **the same tables as the proposal**: same columns, same numbering,
+same per-team grouping, but filled from what `get_project` returned, not from
+what was proposed. Add a line per table for anything that differs from the
+proposal (a task the app refused, a key that did not resolve), then the lines
+below them:
 
-Creative (7)                      staged with the creative brief
-  - Logo update                                 gaps: Size
-  - Brand standards guide
-  ...
-Marketing (10)
-  - Google Ads campaigns: build and manage      paid.google-search-ads-gbp
-  - ZocDoc: build and manage                    unmatched
-  ...
+```markdown
+**Draft built: Mountain Orthopaedics & Spine Rebrand and Patient Growth Program**
+Client: Mountain Orthopaedics & Spine · Owner: Fran Melo · 21 tasks across 4 teams
 
-Skip on the brief screen: video.testimonials-educational-social (not in the SOW)
-Not in scope: Video and photo production day (optional, $15,000 + travel)
-Team lists: mapped Marketing -> "Marketing & Advertising" (name match)
+### Creative (7)
+| # | Task | SOW section(s) | Catalog match | Notes |
+| … |
+
+Skip on the brief screen: video.testimonials-educational-social
+Team lists mapped: Marketing → "Marketing & Advertising"
 
 Nothing is in ClickUp. Review the summary in the app, fill the gaps, and push.
 ```

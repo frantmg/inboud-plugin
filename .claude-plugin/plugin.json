@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "intake",
   "displayName": "Macallan Intake",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Reads a client email, text message, Fathom or phone call, works out what Macallan has to do about it, matches that work to the live service catalog, routes it to the right teams, and files it as an inbound communication with suggested tasks for someone to review. Reads a signed SOW and builds the draft project it describes, with every task staged for a person to push.",
   "author": {
     "name": "The Macallan Group"
